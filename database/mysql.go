@@ -183,7 +183,7 @@ func (d *mySQL) parseBinaryRelations(table, createTable string) {
 
 	scanner := bufio.NewScanner(strings.NewReader(createTable))
 	for scanner.Scan() {
-		if strings.Contains(strings.ToLower(scanner.Text()), "binary") {
+		if strings.Contains(strings.ToLower(scanner.Text()), "binary") || strings.Contains(strings.ToLower(scanner.Text()), "blob") {
 			r := regexp.MustCompile("`([^(]*)`")
 			columnName := r.FindAllStringSubmatch(scanner.Text(), -1)
 
@@ -407,7 +407,7 @@ func (d *mySQL) getProperEscapedValue(col *sql.RawBytes, table, columnName strin
 
 	if col != nil {
 		if d.shouldHexBins && d.isColumnBinary(table, columnName) {
-			val = fmt.Sprintf("UNHEX('%s')", hex.EncodeToString(*col))
+			val = "0x" + hex.EncodeToString(*col)
 		} else {
 			val = string(*col)
 
