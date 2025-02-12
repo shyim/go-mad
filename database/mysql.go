@@ -407,7 +407,13 @@ func (d *mySQL) getProperEscapedValue(col *sql.RawBytes, table, columnName strin
 
 	if col != nil {
 		if d.shouldHexBins && d.isColumnBinary(table, columnName) {
-			val = "0x" + hex.EncodeToString(*col)
+			encodedVal := hex.EncodeToString(*col)
+
+			if encodedVal != "" {
+				val = "0x" + encodedVal
+			} else {
+				val = "NULL"
+			}
 		} else {
 			val = string(*col)
 
